@@ -26,7 +26,8 @@ flag_plot = [ 0 0 0 0 ];
 
 %% load rosbag file
 
-bag = rosbag(bagfile_s1);
+bagfile = ['bagfiles/' , bagfile_s1];
+bag = rosbag(bagfile);
 bag.AvailableTopics;
 
 bag_canpackets_fromexc = select(bag,'Topic','/canpackets/FromExcavator');
@@ -208,6 +209,7 @@ if flag_plot(1,4)==1
     legend('from gcs to ex', 'from local to gcsc');
 end
 
+%% CAN comunication dt plot
 % ex -> gcs
 time1_inter = zeros(1,size(time1,2)-1);
 for i=1:size(time1,2)-1
