@@ -17,9 +17,16 @@ bagfile_s3 = 'exp_test_2021-01-27-10-50-53.bag';
 bagfile_s4 = 'exp_test_2021-01-27-10-57-10.bag';
 bagfile_s5 = 'exp_test_2021-01-27-10-57-45.bag';
 
+%% plot flag
+%flag_from_ex_to_gcs
+%flag_from_gcs_to_local
+%flag_from_local_to_gsc
+%flag_from_gcs_to_ex 
+flag_plot = [ 0 0 0 0 ];
+
 %% load rosbag file
 
-bag = rosbag(bagfile_s3);
+bag = rosbag(bagfile_s1);
 bag.AvailableTopics;
 
 bag_canpackets_fromexc = select(bag,'Topic','/canpackets/FromExcavator');
@@ -63,9 +70,11 @@ for i=1: n_canpackets_fromexc
         - 1e-9*double(msg_canpackets_fromexc{1, 1}.Header.Stamp.Nsec);
 end
 data1 = decodeFromEx(byte1, data1, angle_scale, angle_offset);
-f1 =  figure('Position',[66 1 928 973]);  %figure('Position',[993 1 928 973]);
-plotPressureAngleFromEx(data1, time1,'r'); hold on;
-% figure(2); plotAngleFromEx(data1, time1,'r'); hold on;
+
+if flag_plot(1,1)==1
+    f1 =  figure('Position',[66 1 928 973]);  %figure('Position',[993 1 928 973]);
+    plotPressureAngleFromEx(data1, time1,'r'); hold on;
+end
 
 %% message from gcs to local_planner
 
@@ -98,8 +107,11 @@ for i=1: n_msg_state_tompc
         - double(msg_state{1, 1}.Header.Stamp.Sec) ...
         - 1e-9*double(msg_state{1, 1}.Header.Stamp.Nsec);
 end
-figure(f1); plotPressureAngleFromEx(data2, time2,'b');
-legend('from ex to gcs', 'from gcs to local');
+
+if flag_plot(1,2)==1
+    figure(f1); plotPressureAngleFromEx(data2, time2,'b');
+    legend('from ex to gcs', 'from gcs to local');
+end
 
 %% ==================================================================== %%
 
@@ -120,13 +132,14 @@ for i=1: n_canpackets_toexc
 end
 data3 = calRealToEx(byte3, data3);
 
-f2 =  figure('Position',[993 1 928 973]);
-plotToEx(data3, time3,'r',0.2); hold on;
-f3 =  figure('Position',[993 1 928 973]);
-plotToEx(data3, time3,'r',0.5); hold on;
-f4 =  figure('Position',[993 1 928 973]);
-plotToEx(data3, time3,'r',1.0); hold on;
-
+if flag_plot(1,4)==1
+    f2 =  figure('Position',[993 1 928 973]);
+    plotToEx(data3, time3,'r',0.2); hold on;
+    f3 =  figure('Position',[993 1 928 973]);
+    plotToEx(data3, time3,'r',0.5); hold on;
+    f4 =  figure('Position',[993 1 928 973]);
+    plotToEx(data3, time3,'r',1.0); hold on;
+end
 %% message from local_planner to gcs
 n_msg_MPC_sp_HCE = size(msg_MPC_sp_HCE,1);
 data4 = zeros(18,n_msg_MPC_sp_HCE);
@@ -183,12 +196,51 @@ for i=1: n_msg_MPC_sp_HCE
         %- 1e-9*double(msg_MPC_sp_HCE{1, 1}.Header.Stamp.Nsec) ;
 end
 
-figure(f2);
-plotToEx(data4, time4,'b',0.2);
-legend('from gcs to ex', 'from local to gcsc');
-figure(f3); hold on;
-plotToEx(data4, time4,'b',0.5);
-legend('from gcs to ex', 'from local to gcsc');
-figure(f4); hold on;
-plotToEx(data4, time4,'b',1.0); 
-legend('from gcs to ex', 'from local to gcsc');
+if flag_plot(1,4)==1
+    figure(f2);
+    plotToEx(data4, time4,'b',0.2);
+    legend('from gcs to ex', 'from local to gcsc');
+    figure(f3); hold on;
+    plotToEx(data4, time4,'b',0.5);
+    legend('from gcs to ex', 'from local to gcsc');
+    figure(f4); hold on;
+    plotToEx(data4, time4,'b',1.0);
+    legend('from gcs to ex', 'from local to gcsc');
+end
+
+% ex -> gcs
+time1_inter = zeros(1,size(time1,2)-1);
+for i=1:size(time1,2)-1
+    time1_inter(1,i) = time1(1,i+1) - time1(1,i);
+end
+figure(); plot(time1_inter);
+xlabel('# of data'); ylabel('dt[s]');
+title('exc -> gcs');
+
+% gcs -> local
+time2_inter = zeros(1,size(time2,2)-1);
+for i=1:size(time2,2)-1
+    time2_inter(1,i) = time2(1,i+1) - time2(1,i);
+end
+figure(); plot(time2_inter); 
+xlabel('# of data'); ylabel('dt[s]');
+title('gcs -> local');
+
+% gcs -> ex
+time3_inter = zeros(1,size(time3,2)-1);
+for i=1:size(time3,2)-1
+    time3_inter(1,i) = time3(1,i+1) - time3(1,i);
+end
+figure(); plot(time3_inter);
+xlabel('# of data'); ylabel('dt[s]');
+title('gcs -> ex');
+
+% local -> gcs
+time4_inter = zeros(1,size(time4,2)-1);
+for i=1:size(time4,2)-1
+    time4_inter(1,i) = time4(1,i+1) - time4(1,i);
+end
+figure(); plot(time4_inter);
+xlabel('# of data'); ylabel('dt[s]');
+title('local -> gcs');
+
