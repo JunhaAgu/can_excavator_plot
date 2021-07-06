@@ -17,6 +17,8 @@ bagfile_s3 = 'exp_test_2021-01-27-10-50-53.bag';
 bagfile_s4 = 'exp_test_2021-01-27-10-57-10.bag';
 bagfile_s5 = 'exp_test_2021-01-27-10-57-45.bag';
 
+%% 2021-06-29, Junha Test
+
 %% plot flag
 %flag_from_ex_to_gcs
 %flag_from_gcs_to_local
