@@ -17,18 +17,20 @@ bagfile_s3 = 'exp_test_2021-01-27-10-50-53.bag';
 bagfile_s4 = 'exp_test_2021-01-27-10-57-10.bag';
 bagfile_s5 = 'exp_test_2021-01-27-10-57-45.bag';
 
-%% 2021-06-29, Junha Test
+%% 2021-07-30, Junha Test
+indoor_test1 = 'indoor_test_01.bag';
+
 
 %% plot flag
 %flag_from_ex_to_gcs
 %flag_from_gcs_to_local
 %flag_from_local_to_gsc
 %flag_from_gcs_to_ex 
-flag_plot = [ 0 0 0 0 ];
+flag_plot = [ 1 1 1 1 ];
 
 %% load rosbag file
 
-bagfile = ['bagfiles/' , bagfile_s1];
+bagfile = ['bagfiles/' , indoor_test1];
 bag = rosbag(bagfile);
 bag.AvailableTopics;
 
@@ -60,8 +62,8 @@ min_time = min(time3_0,time4_0);
 %% message from excavator to gcs
 
 n_canpackets_fromexc = size(msg_canpackets_fromexc,1);
-byte1 = zeros(34,n_canpackets_fromexc);
-data1 = zeros(18,n_canpackets_fromexc);
+byte1 = zeros(68,n_canpackets_fromexc);
+data1 = zeros(24,n_canpackets_fromexc);
 time1 = zeros(1, n_canpackets_fromexc);
 angle_scale = 3.0517578125e-5;
 angle_offset = -250;
@@ -112,7 +114,7 @@ for i=1: n_msg_state_tompc
 end
 
 if flag_plot(1,2)==1
-    figure(f1); plotPressureAngleFromEx(data2, time2,'b');
+    figure(f1); plotPressureAngleFromEx(data2, time2,'b--');
     legend('from ex to gcs', 'from gcs to local');
 end
 
@@ -149,47 +151,47 @@ data4 = zeros(18,n_msg_MPC_sp_HCE);
 time4 = zeros(1, n_msg_MPC_sp_HCE);
 
 for i=1: n_msg_MPC_sp_HCE
-    data4(1,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).State(1,1);
-    data4(2,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).State(2,1);
-    data4(3,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).State(3,1);
-    data4(4,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).State(4,1);
-    data4(5,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).State(5,1);
-    data4(6,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).State(6,1);
-    data4(7,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).State(7,1);
-    data4(8,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).State(8,1);
+    data4(1,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).State(1,1);
+    data4(2,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).State(2,1);
+    data4(3,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).State(3,1);
+    data4(4,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).State(4,1);
+    data4(5,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).State(5,1);
+    data4(6,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).State(6,1);
+    data4(7,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).State(7,1);
+    data4(8,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).State(8,1);
     
-    data4(9,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).Input(1,1);
-    data4(10,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).Input(2,1);
-    data4(11,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).Input(3,1);
-    data4(12,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,1).Input(4,1);
+    data4(9,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).Input(1,1);
+    data4(10,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).Input(2,1);
+    data4(11,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).Input(3,1);
+    data4(12,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,1).Input(4,1);
     
-    data4(13,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).State(1,1);
-    data4(14,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).State(2,1);
-    data4(15,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).State(3,1);
-    data4(16,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).State(4,1);
-    data4(17,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).State(5,1);
-    data4(18,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).State(6,1);
-    data4(19,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).State(7,1);
-    data4(20,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).State(8,1);
+    data4(13,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).State(1,1);
+    data4(14,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).State(2,1);
+    data4(15,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).State(3,1);
+    data4(16,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).State(4,1);
+    data4(17,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).State(5,1);
+    data4(18,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).State(6,1);
+    data4(19,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).State(7,1);
+    data4(20,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).State(8,1);
     
-    data4(21,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).Input(1,1);
-    data4(22,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).Input(2,1);
-    data4(23,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).Input(3,1);
-    data4(24,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,2).Input(4,1);
+    data4(21,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).Input(1,1);
+    data4(22,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).Input(2,1);
+    data4(23,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).Input(3,1);
+    data4(24,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,2).Input(4,1);
     
-    data4(25,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).State(1,1);
-    data4(26,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).State(2,1);
-    data4(27,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).State(3,1);
-    data4(28,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).State(4,1);
-    data4(29,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).State(5,1);
-    data4(30,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).State(6,1);
-    data4(31,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).State(7,1);
-    data4(32,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).State(8,1);
+    data4(25,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).State(1,1);
+    data4(26,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).State(2,1);
+    data4(27,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).State(3,1);
+    data4(28,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).State(4,1);
+    data4(29,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).State(5,1);
+    data4(30,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).State(6,1);
+    data4(31,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).State(7,1);
+    data4(32,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).State(8,1);
     
-    data4(33,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).Input(1,1);
-    data4(34,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).Input(2,1);
-    data4(35,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).Input(3,1);
-    data4(36,i) = msg_MPC_sp_HCE{i, 1}.Predictions(1,3).Input(4,1);
+    data4(33,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).Input(1,1);
+    data4(34,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).Input(2,1);
+    data4(35,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).Input(3,1);
+    data4(36,i) = msg_MPC_sp_HCE{i, 1}.Predictions_(1,3).Input(4,1);
     
     
     time4(1,i) = double(msg_MPC_sp_HCE{i, 1}.Header.Stamp.Sec) ...
@@ -201,14 +203,14 @@ end
 
 if flag_plot(1,4)==1
     figure(f2);
-    plotToEx(data4, time4,'b',0.2);
-    legend('from gcs to ex', 'from local to gcsc');
+    plotToEx(data4, time4,'b--',0.2);
+    legend('from gcs to ex', 'from local to gcs');
     figure(f3); hold on;
-    plotToEx(data4, time4,'b',0.5);
-    legend('from gcs to ex', 'from local to gcsc');
+    plotToEx(data4, time4,'b--',0.5);
+    legend('from gcs to ex', 'from local to gcs');
     figure(f4); hold on;
-    plotToEx(data4, time4,'b',1.0);
-    legend('from gcs to ex', 'from local to gcsc');
+    plotToEx(data4, time4,'b--',1.0);
+    legend('from gcs to ex', 'from local to gcs');
 end
 
 %% CAN comunication dt plot
@@ -217,34 +219,69 @@ time1_inter = zeros(1,size(time1,2)-1);
 for i=1:size(time1,2)-1
     time1_inter(1,i) = time1(1,i+1) - time1(1,i);
 end
-figure(); plot(time1_inter);
-xlabel('# of data'); ylabel('dt[s]');
+m = mean(time1_inter(1,1:end));
+s = std(time1_inter(1,1:end));
+figure(); plot(time1_inter,'c');
+m_ = ['Mean = ',num2str(m),' [s]'];
+s_ = ['std = ',num2str(s),' [s]'];
+yline(m,'-',m_,'LineWidth',1,'Color','b');
+yline(m,'-',s_,'LineWidth',1,'Color','b','LabelVerticalAlignment','bottom');
+xlabel('# of data'); ylabel('dt [s]');
 title('exc -> gcs');
+grid on;
+xlim([1, length(time1_inter(1,1:end))]);
+ylim([0.09 0.11]);
 
 % gcs -> local
 time2_inter = zeros(1,size(time2,2)-1);
 for i=1:size(time2,2)-1
     time2_inter(1,i) = time2(1,i+1) - time2(1,i);
 end
-figure(); plot(time2_inter); 
-xlabel('# of data'); ylabel('dt[s]');
+m = mean(time2_inter(1,1:end));
+s = std(time2_inter(1,1:end));
+figure(); plot(time2_inter,'c');
+m_ = ['Mean = ',num2str(m),' [s]'];
+s_ = ['std = ',num2str(s),' [s]'];
+yline(m,'-',m_,'LineWidth',1,'Color','b');
+yline(m,'-',s_,'LineWidth',1,'Color','b','LabelVerticalAlignment','bottom');
+xlabel('# of data'); ylabel('dt [s]');
 title('gcs -> local');
+grid on;
+xlim([1, length(time2_inter(1,1:end))]);
+ylim([0.09 0.11]);
 
 % gcs -> ex
 time3_inter = zeros(1,size(time3,2)-1);
 for i=1:size(time3,2)-1
     time3_inter(1,i) = time3(1,i+1) - time3(1,i);
 end
-figure(); plot(time3_inter);
-xlabel('# of data'); ylabel('dt[s]');
+m = mean(time3_inter(1,1:end));
+s = std(time3_inter(1,1:end));
+figure(); plot(time3_inter,'c');
+m_ = ['Mean = ',num2str(m),' [s]'];
+s_ = ['std = ',num2str(s),' [s]'];
+yline(m,'-',m_,'LineWidth',1,'Color','b');
+yline(m,'-',s_,'LineWidth',1,'Color','b','LabelVerticalAlignment','bottom');
+xlabel('# of data'); ylabel('dt [s]');
 title('gcs -> ex');
+grid on;
+xlim([1, length(time3_inter(1,1:end))]);
+ylim([0.09 0.11]);
 
 % local -> gcs
 time4_inter = zeros(1,size(time4,2)-1);
 for i=1:size(time4,2)-1
     time4_inter(1,i) = time4(1,i+1) - time4(1,i);
 end
-figure(); plot(time4_inter);
-xlabel('# of data'); ylabel('dt[s]');
+m = mean(time4_inter(1,1:end));
+s = std(time4_inter(1,1:end));
+figure(); plot(time4_inter,'c');
+m_ = ['Mean = ',num2str(m),' [s]'];
+s_ = ['std = ',num2str(s),' [s]'];
+yline(m,'-',m_,'LineWidth',1,'Color','b');
+yline(m,'-',s_,'LineWidth',1,'Color','b','LabelVerticalAlignment','bottom');
+xlabel('# of data'); ylabel('dt [s]');
 title('local -> gcs');
-
+grid on;
+xlim([1, length(time4_inter(1,1:end))]);
+ylim([0.09 0.11]);

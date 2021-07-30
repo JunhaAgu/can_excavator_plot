@@ -1,5 +1,15 @@
 function data = decodeFromEx(byte, data, angle_scale, angle_offset)
 
+Boom_Angle_buf = zeros(1,4);
+Arm_Angle_buf = zeros(1,4);
+Bkt_Angle_buf = zeros(1,4);
+Swing_Angle_buf = zeros(1,4);
+
+Boom_Rate_buf = zeros(1,3);
+Arm_Rate_buf = zeros(1,3);
+Bkt_Rate_buf = zeros(1,3);
+Swing_Rate_buf = zeros(1,3);
+
 for i=1: size(data,2)
     data(1,i) =  0.1 * ( byte(2,i)*16^2 + byte(1,i) );
     data(2,i) =  0.1 * ( byte(4,i)*16^2 + byte(3,i) );
@@ -17,6 +27,40 @@ for i=1: size(data,2)
     data(12,i) =  pi/180*(angle_scale * ( byte(28,i)*16^4 + byte(27,i)*16^2 + byte(26,i) ) + angle_offset );
     data(13,i) =  pi/180*(angle_scale * ( byte(31,i)*16^4 + byte(30,i)*16^2 + byte(29,i) ) + angle_offset );
     data(14,i) =  pi/180*(angle_scale * ( byte(34,i)*16^4 + byte(33,i)*16^2 + byte(32,i) ) + angle_offset );
+    
+    Boom_Angle_buf(1) = data(11,i);
+    Arm_Angle_buf(1) = data(12,i);
+    Bkt_Angle_buf(1) = data(13,i);
+    Swing_Angle_buf(1) = data(14,i);
+    
+    Boom_Rate_buf = SLIDE_WINDOW_RATE_BUF(Boom_Rate_buf);
+    Boom_Rate_buf(1) = BUTTERWORTH(Boom_Angle_buf, Boom_Rate_buf);
+    data(15,i) = Boom_Rate_buf(1);
+    
+    Arm_Rate_buf = SLIDE_WINDOW_RATE_BUF(Arm_Rate_buf);
+    Arm_Rate_buf(1) = BUTTERWORTH(Arm_Angle_buf, Arm_Rate_buf);
+    data(16,i) = Arm_Rate_buf(1);
+    
+    Bkt_Rate_buf = SLIDE_WINDOW_RATE_BUF(Bkt_Rate_buf);
+    Bkt_Rate_buf(1) = BUTTERWORTH(Bkt_Angle_buf, Bkt_Rate_buf);
+    data(17,i) = Bkt_Rate_buf(1);
+    
+    Swing_Rate_buf = SLIDE_WINDOW_RATE_BUF(Swing_Rate_buf);
+    Swing_Rate_buf(1) = BUTTERWORTH(Swing_Angle_buf, Swing_Rate_buf);
+    data(18,i) = Swing_Rate_buf(1);
+    
+    Boom_Angle_buf = SLIDE_WINDOW_ANGLE_BUF(Boom_Angle_buf);
+    Arm_Angle_buf = SLIDE_WINDOW_ANGLE_BUF(Arm_Angle_buf);
+    Bkt_Angle_buf = SLIDE_WINDOW_ANGLE_BUF(Bkt_Angle_buf);
+    Swing_Angle_buf = SLIDE_WINDOW_ANGLE_BUF(Swing_Angle_buf);
+    
+    data(19,i) = byte(42,i)*16^14+byte(41,i)*16^12+byte(40,i)*16^10+byte(39,i)*16^8+byte(38,i)*16^6+byte(37,i)*16^4+byte(36,i)*16^2+byte(35,i);
+    data(20,i) = byte(50,i)*16^14+byte(49,i)*16^12+byte(48,i)*16^10+byte(47,i)*16^8+byte(46,i)*16^6+byte(45,i)*16^4+byte(44,i)*16^2+byte(43,i);
+    data(21,i) = byte(58,i)*16^14+byte(57,i)*16^12+byte(56,i)*16^10+byte(55,i)*16^8+byte(54,i)*16^6+byte(53,i)*16^4+byte(52,i)*16^2+byte(51,i);
+    data(22,i) = (1e-7)*(byte(62,i)*16^6+byte(61,i)*16^4+byte(60,i)*16^2+byte(59,i)) + 210;
+    data(23,i) = (1e-7)*(byte(66,i)*16^6+byte(65,i)*16^4+byte(64,i)*16^2+byte(63,i)) + 210;
+    data(24,i) = (0.125)*(byte(68,i)*16^2+byte(67,i)) + 2500;
+
 end
 
 end
