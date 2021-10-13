@@ -1,6 +1,48 @@
-clc; clear all; close all;
+clc; clear all;
+close all;
+dir = '/home/larr/Downloads/matlab/code/can_excavator_plot';
+dataname = '/datafolder';
 
-f = fopen('from_excavator.txt');
+D2R = pi/180;
+R2D = 1/D2R;
+
+img_data    = struct();
+img_data.n_cols = 1032; 
+img_data.n_rows = 772;
+
+sensor_data = struct();
+
+data = importdata([dir,dataname,'/from_excavator.txt']);
+
+fileID = fopen([dir,dataname,'/association.txt'],'r');
+tline  = fgets(fileID);
+n_data = 0;
+img_data.time = [];
+img_data.image_name.boom.upper  = cell(1,1);
+img_data.image_name.boom.lower  = cell(1,1);
+img_data.image_name.cabin.upper = cell(1,1);
+img_data.image_name.cabin.lower = cell(1,1);
+
+while(1)
+   tline = fgets(fileID);
+   
+   if(tline == -1)
+      img_data.n_data = n_data;
+      break;
+   end
+      n_data = n_data + 1;
+
+   chars = strsplit(tline,' ');
+   img_data.time = [img_data.time;str2num(chars{1,1})];
+   img_data.image_name.boom.upper{1,n_data}  = [dir,dataname,chars{1,2}];
+   img_data.image_name.boom.lower{1,n_data}  = [dir,dataname,chars{1,3}];
+   img_data.image_name.cabin.upper{1,n_data} = [dir,dataname,chars{1,4}];
+   img_data.image_name.cabin.lower{1,n_data} = [dir,dataname,chars{1,5}];
+   
+end
+
+
+f = fopen([dir,dataname,'/from_excavator.txt']);
 fgets(f);
 
 time=[];
@@ -14,7 +56,7 @@ while(1)
     else
         temp = strsplit(line, ', ');
         time = [time, str2num(temp{1,1})];
-        for i=2:19
+        for i=2:25
             data(i-1,iter) = str2num(temp{1,i});
         end
     end
@@ -37,40 +79,31 @@ for i=1:size(time2,2)-1
     diff_time(1,i) = time2(1,i+1) - time2(1,i);
 end
 
-m = mean(diff_time(1,50:end));
-s = std(diff_time(1,50:end));
 
-m_hz = mean(1./diff_time(1,50:end));
-s_hz = std(1./diff_time(1,50:end));
+%% plot ex to gcs
+for i=9:18
+   data(i,:) = 180/pi*data(i,:);
+end
 
-figure();
-plot(diff_time(1,50:end),'c');
+f1 =  figure('Position',[66 1 928 973]);  %figure('Position',[993 1 928 973]);
+plotFromEx(data, time2,'r'); hold on;
+
+
+m = mean(diff_time(1,1:end));
+s = std(diff_time(1,1:end));
+figure(); plot(diff_time,'c');
 m_ = ['Mean = ',num2str(m),' [s]'];
-% s_plus = ['Mean + 3sigma = ',num2str(m+3*s),' [s]'];
-% s_minus = ['Mean - 3sigma = ',num2str(m-3*s),' [s]'];
 s_ = ['std = ',num2str(s),' [s]'];
 yline(m,'-',m_,'LineWidth',1,'Color','b');
 yline(m,'-',s_,'LineWidth',1,'Color','b','LabelVerticalAlignment','bottom');
-% yline(m+3*s,'--',s_plus,'LineWidth',3,'Color','k');
-% yline(m-3*s,'--',s_minus,'LineWidth',3,'Color','k');
-title('CAN receive time check dt [s]');
-xlabel('# of data'); ylabel('time interval [s]');
+xlabel('# of data'); ylabel('dt [s]');
+title('exc -> gcs');
 grid on;
-xlim([1, length(diff_time(1,50:end))]);
-ylim([0.09 0.11]);
+xlim([1, length(diff_time(1,1:end))]);
+% ylim([0.09 0.11]);
 
 figure();
-plot(1./diff_time(1,50:end),'g');
-m_hz_ = ['Mean = ',num2str(m_hz),' [Hz]'];
-% s_plus = ['Mean + 3sigma = ',num2str(m_hz+3*s_hz),' [Hz]'];
-% s_minus = ['Mean - 3sigma = ',num2str(m_hz-3*s_hz),' [Hz]'];
-s_hz_ = ['std = ',num2str(s_hz),' [hz]'];
-yline(m_hz,'-',m_hz_,'LineWidth',1,'Color','b');
-yline(m_hz,'-',s_hz_,'LineWidth',1,'Color','b','LabelVerticalAlignment','bottom');
-% yline(m_hz+3*s_hz,'--',s_plus,'LineWidth',3,'Color','k');
-% yline(m_hz-3*s_hz,'--',s_minus,'LineWidth',3,'Color','k');
-title('CAN receive time check freq [Hz]');
-xlabel('# of data'); ylabel('frequency [Hz]');
-grid on;
-xlim([1, length(diff_time(1,50:end))]);
-ylim([9 11]);
+plot(time,time,'.k'); hold on;
+plot(img_data.time,img_data.time,'rs');
+legend('sensor time','image time');
+

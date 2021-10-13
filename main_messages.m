@@ -18,7 +18,7 @@ bagfile_s4 = 'exp_test_2021-01-27-10-57-10.bag';
 bagfile_s5 = 'exp_test_2021-01-27-10-57-45.bag';
 
 %% 2021-07-30, Junha Test
-indoor_test1 = 'indoor_test_01.bag';
+indoor_test1 = 'out1.bag';
 
 
 %% plot flag
@@ -96,16 +96,28 @@ for i=1: n_msg_state_tompc
     data2(6,i) = msg_state{i, 1}.Measure.Pressure.BCylSC;
     data2(7,i) = msg_state{i, 1}.Measure.Pressure.KCylLC;
     data2(8,i) = msg_state{i, 1}.Measure.Pressure.KCylSC;
-    data2(9,i) = msg_state{i, 1}.Measure.Angle.ThetaBody;
-    data2(10,i) = msg_state{i, 1}.Measure.Angle.PhiBody;
-    data2(11,i) = msg_state{i, 1}.Measure.Angle.ThetaB;
-    data2(12,i) = msg_state{i, 1}.Measure.Angle.ThetaA;
-    data2(13,i) = msg_state{i, 1}.Measure.Angle.ThetaK;
-    data2(14,i) = msg_state{i, 1}.Measure.Angle.PsiU;
-    data2(15,i) = msg_state{i, 1}.Measure.Velocity.ThetaBDot;
-    data2(16,i) = msg_state{i, 1}.Measure.Velocity.ThetaADot;
-    data2(17,i) = msg_state{i, 1}.Measure.Velocity.ThetaKDot;
-    data2(18,i) = msg_state{i, 1}.Measure.Velocity.PsiUDot;
+    
+    % [Degree]
+    data2(9,i) = 180/pi()*msg_state{i, 1}.Measure.Angle.ThetaBody;
+    data2(10,i) = 180/pi()*msg_state{i, 1}.Measure.Angle.PhiBody;
+    data2(11,i) = 180/pi()*msg_state{i, 1}.Measure.Angle.ThetaB;
+    data2(12,i) = 180/pi()*msg_state{i, 1}.Measure.Angle.ThetaA;
+    data2(13,i) = 180/pi()*msg_state{i, 1}.Measure.Angle.ThetaK;
+    data2(14,i) = 180/pi()*msg_state{i, 1}.Measure.Angle.PsiU;
+    data2(15,i) = 180/pi()*msg_state{i, 1}.Measure.Velocity.ThetaBDot;
+    data2(16,i) = 180/pi()*msg_state{i, 1}.Measure.Velocity.ThetaADot;
+    data2(17,i) = 180/pi()*msg_state{i, 1}.Measure.Velocity.ThetaKDot;
+    data2(18,i) = 180/pi()*msg_state{i, 1}.Measure.Velocity.PsiUDot;
+%     data2(9,i) = msg_state{i, 1}.Measure.Angle.ThetaBody;
+%     data2(10,i) = msg_state{i, 1}.Measure.Angle.PhiBody;
+%     data2(11,i) = msg_state{i, 1}.Measure.Angle.ThetaB;
+%     data2(12,i) = msg_state{i, 1}.Measure.Angle.ThetaA;
+%     data2(13,i) = msg_state{i, 1}.Measure.Angle.ThetaK;
+%     data2(14,i) = msg_state{i, 1}.Measure.Angle.PsiU;
+%     data2(15,i) = msg_state{i, 1}.Measure.Velocity.ThetaBDot;
+%     data2(16,i) = msg_state{i, 1}.Measure.Velocity.ThetaADot;
+%     data2(17,i) = msg_state{i, 1}.Measure.Velocity.ThetaKDot;
+%     data2(18,i) = msg_state{i, 1}.Measure.Velocity.PsiUDot;
     
     time2(1,i) = double(msg_state{i, 1}.Header.Stamp.Sec) ...
         + 1e-9*double(msg_state{i, 1}.Header.Stamp.Nsec) ...
@@ -114,7 +126,7 @@ for i=1: n_msg_state_tompc
 end
 
 if flag_plot(1,2)==1
-    figure(f1); plotPressureAngleFromEx(data2, time2,'b--');
+    figure(f1); plotPressureAngleFromEx(data2, time2,'b');
     legend('from ex to gcs', 'from gcs to local');
 end
 

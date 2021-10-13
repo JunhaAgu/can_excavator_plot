@@ -1,0 +1,91 @@
+% function [img_data,sensor_data] = loadHCEData4cams2lidars(dir,dataname)
+clc; clear all;
+close all;
+dir = '/home/larr/Downloads/matlab/code/can_excavator_plot';
+dataname = '/chkim';
+
+D2R = pi/180;
+R2D = 1/D2R;
+
+img_data    = struct();
+img_data.n_cols = 1032; 
+img_data.n_rows = 772;
+
+sensor_data = struct();
+
+data = importdata([dir,dataname,'/from_excavator.txt']);
+
+fileID = fopen([dir,dataname,'/association.txt'],'r');
+tline  = fgets(fileID);
+n_data = 0;
+img_data.time = [];
+img_data.image_name.boom.upper  = cell(1,1);
+img_data.image_name.boom.lower  = cell(1,1);
+img_data.image_name.cabin.upper = cell(1,1);
+img_data.image_name.cabin.lower = cell(1,1);
+
+while(1)
+   tline = fgets(fileID);
+   
+   if(tline == -1)
+      img_data.n_data = n_data;
+      break;
+   end
+      n_data = n_data + 1;
+
+   chars = strsplit(tline,' ');
+   img_data.time = [img_data.time;str2num(chars{1,1})];
+   img_data.image_name.boom.upper{1,n_data}  = [dir,dataname,chars{1,2}];
+   img_data.image_name.boom.lower{1,n_data}  = [dir,dataname,chars{1,3}];
+   img_data.image_name.cabin.upper{1,n_data} = [dir,dataname,chars{1,4}];
+   img_data.image_name.cabin.lower{1,n_data} = [dir,dataname,chars{1,5}];
+   
+end
+
+
+if(0)
+   figure; him = imshow(zeros(n_rows,n_cols),[0,255]); hold on;
+   for n = 1:n_data
+      I0 = imread(image_name.boom.upper{1,n});
+      him.CData = I0;
+      drawnow;
+   end
+end
+
+sensor_data.time             = data.data(:,1);
+sensor_data.body_pitch       = data.data(:,10)*R2D;
+sensor_data.body_roll        = data.data(:,11)*R2D;
+sensor_data.boom_joint_angle = data.data(:,12)*R2D;
+sensor_data.arm_joint_angle  = data.data(:,13)*R2D;
+sensor_data.bkt_joint_angle  = data.data(:,14)*R2D;
+sensor_data.swing_angle      = data.data(:,15)*R2D;
+sensor_data.boom_joint_rate  = data.data(:,16);
+sensor_data.arm_joint_rate   = data.data(:,17);
+sensor_data.bkt_joint_rate   = data.data(:,18);
+sensor_data.swing_rate       = data.data(:,19);
+
+sensor_data.n_data = length(sensor_data.time);
+
+figure();
+subplot(2,1,1);plot(sensor_data.time,sensor_data.body_pitch); xlabel('time [s]'); ylabel('body pitch [deg]');ylim([-1,1]*1);
+subplot(2,1,2);plot(sensor_data.time,sensor_data.body_roll); xlabel('time [s]'); ylabel('body roll [deg]');ylim([-1,1]*1);
+
+figure();
+subplot(4,2,1);plot(sensor_data.time,-(-sensor_data.boom_joint_angle-57.75)); xlabel('time [s]'); ylabel('boom angle [deg]');ylim([0,1]*65);
+subplot(4,2,2);plot(sensor_data.time,-sensor_data.boom_joint_rate);  xlabel('time [s]'); ylabel('boom rate [rad/s]');ylim([-1,1]*0.5);
+
+subplot(4,2,3);plot(sensor_data.time,sensor_data.arm_joint_angle);   xlabel('time [s]'); ylabel('arm angle [deg]');ylim([-1,1]*70);
+subplot(4,2,4);plot(sensor_data.time,sensor_data.arm_joint_rate);    xlabel('time [s]'); ylabel('arm rate [rad/s]');ylim([-1,1]*0.5);
+
+subplot(4,2,5);plot(sensor_data.time,sensor_data.bkt_joint_angle);   xlabel('time [s]'); ylabel('bkt angle [deg]');ylim([-1,1]*180);
+subplot(4,2,6);plot(sensor_data.time,sensor_data.bkt_joint_rate);    xlabel('time [s]'); ylabel('bkt rate [rad/s]');ylim([-1,1]*0.5);
+
+subplot(4,2,7);plot(sensor_data.time,sensor_data.swing_angle);       xlabel('time [s]'); ylabel('swing angle [deg]');ylim([-1,1]*30);
+subplot(4,2,8);plot(sensor_data.time,sensor_data.swing_rate);        xlabel('time [s]'); ylabel('swing rate [rad/s]');ylim([-1,1]*0.5);
+
+figure();
+plot(sensor_data.time,sensor_data.time,'k.'); hold on;
+plot(img_data.time,img_data.time,'rs');
+
+
+% end
