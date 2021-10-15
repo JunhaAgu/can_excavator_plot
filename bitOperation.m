@@ -1,14 +1,18 @@
 function result = bitOperation(byte)
     % [byte(8) byte(7) byte(6) byte(5) byte(4) byte(3) byte(2) byte(1)]
     byte = uint8(byte);
-    sign = bitshift(byte(8),-7);
+    sign = uint8(bitshift(byte(8),-7));
+    
+    if sign==1
+        byte(8) = byte(8)-128;
+    end
     
     exp_temp = uint16(byte(8));
-    exponent = bitshift(exp_temp, 4) + uint16(bitshift(byte(7),-4));
+    exponent = uint16(bitshift(exp_temp, 4)) + uint16(bitshift(byte(7),-4));
     exp = 2^(double(exponent-1023));
     
     b7 = uint8(byte(7));
-    b7_low = bitshift(bitshift(b7,4),-4);
+    b7_low = uint8(bitshift(uint8(bitshift(b7,4)),-4));
     
 %     sig = bitshift(b7_low,48) + bitshift(byte(6), 40) + bitshift(byte(5), 32) + bitshift(byte(4), 24) + bitshift(byte(3), 16) ...
 %         + bitshift(byte(2), 8) + byte(1);
@@ -19,7 +23,7 @@ function result = bitOperation(byte)
     
     result = exp * sig;
     
-    if sign>1
+    if sign==1
         result = -result;
     end
 end
