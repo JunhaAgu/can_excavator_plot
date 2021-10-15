@@ -1,7 +1,7 @@
 clc; clear all;
 close all;
-dir = '/home/larr/Downloads/matlab/code/can_excavator_plot';
-dataname = '/datafolder';
+dir = '/home/junhakim/hce_plot_data';
+dataname = '/2021_10_14/14test_5';
 
 D2R = pi/180;
 R2D = 1/D2R;
@@ -88,7 +88,6 @@ end
 f1 =  figure('Position',[66 1 928 973]);  %figure('Position',[993 1 928 973]);
 plotFromEx(data, time2,'r'); hold on;
 
-
 m = mean(diff_time(1,1:end));
 s = std(diff_time(1,1:end));
 figure(); plot(diff_time,'c');
@@ -106,4 +105,3 @@ figure();
 plot(time,time,'.k'); hold on;
 plot(img_data.time,img_data.time,'rs');
 legend('sensor time','image time');
-

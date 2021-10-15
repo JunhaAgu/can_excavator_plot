@@ -1,25 +1,11 @@
 clc; clear all; close all;
 
-%% 2021-01-19 experiment
-bagfile1 = 'exp_communication_2021-01-19-14-38-10.bag';
-bagfile2 = 'exp_communication_2021-01-19-14-43-22.bag';
-bagfile3 = 'exp_communication_2021-01-19-14-55-00.bag';
-
-%% 2021-01-25, 26 test
-bagfile_test = 'exp_test_2021-01-25-17-23-31.bag';
-bagfile_test2 = 'exp_test_2021-01-25-19-53-11.bag';
-bagfile_test3 = 'exp_test_2021-01-26-16-31-29.bag';
-
-%% 2021-01-27 experiment
-bagfile_s1 = 'exp_test_2021-01-27-10-31-11.bag';
-bagfile_s2 = 'exp_test_2021-01-27-10-45-29.bag';
-bagfile_s3 = 'exp_test_2021-01-27-10-50-53.bag';
-bagfile_s4 = 'exp_test_2021-01-27-10-57-10.bag';
-bagfile_s5 = 'exp_test_2021-01-27-10-57-45.bag';
+%% data directory
+dir = '/home/junhakim/hce_plot_data';
+dataname = '/2021_10_14/14test_5';
 
 %% 2021-07-30, Junha Test
-indoor_test1 = 'out1.bag';
-
+bagfile_name = 'bagfile.bag';
 
 %% plot flag
 %flag_from_ex_to_gcs
@@ -30,7 +16,7 @@ flag_plot = [ 1 1 1 1 ];
 
 %% load rosbag file
 
-bagfile = ['bagfiles/' , indoor_test1];
+bagfile = [dir,dataname, '/' , bagfile_name];
 bag = rosbag(bagfile);
 bag.AvailableTopics;
 
